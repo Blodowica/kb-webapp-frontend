@@ -1,0 +1,51 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cypress-and-build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: kb-webapp-frontend
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Start the React App (Background)
+        run: npm start &
+        env:
+          CI: true
+
+      - name: Wait for App to be Ready
+        uses: jakejarvis/wait-action@v0.1.0
+        with:
+          url: http://localhost:3000
+          timeout: 60
+
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: kb-webapp-frontend
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 60
+          start: npm start
+
+      - name: Build the React App
+        run: npm run build
