@@ -9,12 +9,9 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  cypress-and-build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
- 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -26,7 +23,7 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
- 
+
       - name: Start the React App (Background)
         run: npm start &
         env:
@@ -41,7 +38,6 @@ jobs:
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
         with:
-          working-directory: kb-webapp-frontend
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
           start: npm start
