@@ -1,4 +1,4 @@
-name: Frontend Tests
+name: Frontend CI/CD Pipeline
 
 on:
   push:
@@ -9,9 +9,8 @@ on:
       - main
 
 jobs:
-  build-frontend:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -25,23 +24,31 @@ jobs:
         run: npm ci
 
       - name: Build the React App
-        run:  CI=false npm run build
+        run: CI=false npm run build
         env:
           CI: true
 
-  sonarqube:
-    name: SonarQube
-    needs: build-frontend   
+  snyk:
+    needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Required for better analysis accuracy
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Run Snyk Security Test
+        run: snyk test --all-projects
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
- 
- 
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Monitor Project with Snyk
+        run: snyk monitor --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
