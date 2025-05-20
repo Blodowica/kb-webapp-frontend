@@ -22,25 +22,18 @@ jobs:
           node-version: 18
 
       - name: Install Dependencies
-        run: npm install
-
-      - name: Start the React App (Background)
-        run: npm start &
-        env:
-          CI: true
-
-      - name: Wait for App to be Ready
-        uses: jakejarvis/wait-action@v0.1.0
-        with:
-          url: http://localhost:3000
-          timeout: 60
+        run: npm ci
 
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
         with:
+          start: npm start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
-          start: npm start
+        env:
+          CI: true
 
       - name: Build the React App
         run: npm run build
+        env:
+          CI: true
