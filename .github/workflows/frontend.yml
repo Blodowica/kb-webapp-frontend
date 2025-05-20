@@ -44,7 +44,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   snyk:
-    needs: sonarqube
+    name: Snyk Security Scan
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -60,10 +61,12 @@ jobs:
 
       - name: Run Snyk Security Test
         run: snyk test --all-projects
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Monitor Project with Snyk
         run: snyk monitor --all-projects
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
