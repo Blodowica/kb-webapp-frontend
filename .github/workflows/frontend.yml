@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  cypress-and-build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     defaults:
@@ -27,6 +27,7 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        working-directory: kb-webapp-frontend
 
       - name: Start the React App (Background)
         run: npm start &
