@@ -14,8 +14,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: kb-webapp-frontend
-
+ 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -27,8 +26,7 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-        working-directory: kb-webapp-frontend
-
+ 
       - name: Start the React App (Background)
         run: npm start &
         env:
