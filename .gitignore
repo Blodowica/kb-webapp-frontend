@@ -1,61 +1,23 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
-
-# production
-/build
-/dist
-
-# misc
-.DS_Store
-.env
-.env.*       # ignore all env variants like .env.local, .env.production
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# IDEs and editors
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-
-# OS files
-Thumbs.db
-ehthumbs.db
-Icon?
-Desktop.ini
-
-# optional npm cache
-.npm
+/.pnp
+.pnp.js
 
 # testing
 /coverage
-/jest-test-results.json
 
-# Parcel-bundler cache
-.cache
+# production
+/build
 
-# ESLint cache
-.eslintcache
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Mac system files
-*.DS_Store
-
-# Storybook
-.out
-
-# Optional next.js
-.next
-
-# Binaries
-*.exe
-*.out
-*.app
-
-# GitHub Actions logs
-*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
