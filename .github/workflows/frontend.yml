@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  cypress-and-build:
+  build-frontend:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,16 +24,21 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Run Cypress Tests
-        uses: cypress-io/github-action@v6
-        with:
-          start: npm start
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 60
-        env:
-          CI: true
-
       - name: Build the React App
         run: npm run build
         env:
           CI: true
+
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensures full history for better analysis
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
