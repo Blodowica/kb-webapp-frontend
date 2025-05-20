@@ -28,25 +28,23 @@ jobs:
         env:
           CI: true
 
-  sonarcloud:
+  sonarqube:
+    name: SonarQube
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Needed for SonarCloud
+          fetch-depth: 0  # Required for better analysis accuracy
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1
-        with:
-          organization: ${{ secrets.SONAR_ORG }}
-          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   snyk:
-    needs: sonarcloud
+    needs: sonarqube
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
