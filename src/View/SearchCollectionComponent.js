@@ -3,9 +3,8 @@ import MovieServiceAPI from "../API/MovieServiceAPI/MovieServiceAPI";
 import { useLocation, useNavigate } from "react-router-dom";
 import HeaderComponent from "../Components/LayoutComponents/HeaderComponents/HeaderComponent";
 import client from "../SanitySetup/sanityClient";
-import { Container, Table } from "react-bootstrap";
+import { Col, Container, Row, Table } from "react-bootstrap";
 import { GetAllPageComponents } from "../SanitySetup/sanityQueries";
-import MovieDetailsComponent from "./MovieDetailsComponent";
 
 function SearchCollectionComponent() {
   const [sections, setSections] = useState([]);
@@ -21,9 +20,7 @@ function SearchCollectionComponent() {
     const params = new URLSearchParams(location.search);
     return params.get("query");
   };
-
   function handleShowMovieDetails(selectedMovieId) {
- 
     navigate(`/search/movie-details?movieId=${selectedMovieId}`);
   }
 
@@ -37,10 +34,7 @@ function SearchCollectionComponent() {
     const searchQuery = getQueryParam(); // Get the query from URL
     async function fetchMovies() {
       if (searchQuery) {
-        console.log("Search query:", searchQuery); // Log the search query
         let response = await MovieServiceAPI(searchQuery);
-        console.log(response);
-
         setMovies(response);
       }
     }
@@ -52,47 +46,53 @@ function SearchCollectionComponent() {
       <div>
         <HeaderComponent sections={sections} hideEditButton={hideEditButton} />
       </div>
-
-      <div>
-        {movies &&
-          movies.map((movie, index) => {
-            return (
-              <div
-                key={index}
-                style={{ justifyContent: "center", display: "flex" }}
-              >
-                <Table
-                  striped
-                  style={{ width: "50%", cursor: 'pointer' }}
-                  onClick={() => handleShowMovieDetails(movie?.id)}
-                >
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Overview</th>
-                      <th>release date</th>
-                      <th>poster</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{movie.title}</td>
-                      <td>{movie.overview}</td>
-                      <td>{movie.release_date}</td>
-                      <td>
-                        <img
-                          style={{ height: "150px" }}
-                          src={movie.poster_path}
-                          alt=" movie poster"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </div>
-            );
-          })}
-      </div>
+      <Row>
+        <Col lg={4}>
+        filter menu
+        </Col>
+        <Col lg={8}>
+          <div id="MovieSearchTableContainer">
+            {movies &&
+              movies.map((movie, index) => {
+                return (
+                  <div
+                    key={index}
+                    style={{  display: "flex" }}
+                  >
+                    <Table
+                      striped
+                      style={{ width: "100%", cursor: "pointer" }}
+                      onClick={() => handleShowMovieDetails(movie?.id)}
+                    >
+                      <thead>
+                        <tr>
+                          <th>Title</th>
+                          <th>Overview</th>
+                          <th>release date</th>
+                          <th>Poster</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{movie.title}</td>
+                          <td>{movie.overview}</td>
+                          <td>{movie.release_date}</td>
+                          <td>
+                            <img
+                              style={{ height: "150px" }}
+                              src={movie.poster_path}
+                              alt={`Movie Poster: ${movie.title}`}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </div>
+                );
+              })}
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 }

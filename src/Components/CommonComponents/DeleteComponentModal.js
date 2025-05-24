@@ -4,13 +4,10 @@ import Modal from 'react-bootstrap/Modal';
 
 function DeleteComponentModal() {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   return (
     <>
-     
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Delete Component</Modal.Title>

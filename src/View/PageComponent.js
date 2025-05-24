@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import client from "../SanitySetup/sanityClient";
 import HeaderComponent from "../Components/LayoutComponents/HeaderComponents/HeaderComponent";
 import FooterComponent from "../Components/LayoutComponents/FooterComponents/FooterComponent";
@@ -15,6 +15,7 @@ import {
 } from "../SanitySetup/sanityQueries";
 
 import AddComponentOptionButtons from "../Components/CommonComponents/AddComponentOptionButtons";
+import ErrorMessage from "../Components/CommonComponents/ErrorMessageComponent";
 
 function PageComponent() {
   const [sections, setSections] = useState([]);
@@ -22,33 +23,61 @@ function PageComponent() {
   const [editSelectedComponent, setEditSelectedComponent] = useState(false);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
   const [showOptionsButtons, setShowOptionsButtons] = useState(false);
-  //get all section data query!
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [showError, setShowError] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(null);
+
+  // get all section data query!
   const query = GetAllPageComponents();
 
   async function fetchSection() {
     const data = await client.fetch(query);
     setSections(data);
   }
+
   useEffect(() => {
     fetchSection();
   }, []);
 
   const handleUpdateComponent = async (componentId, formData) => {
     try {
-      var response = await UpdateComponentQuery(componentId, formData);
+      const response = await UpdateComponentQuery(componentId, formData);
       console.log(response);
+
+      setErrorMessage(null);
+      setSuccessMessage("Component updated successfully!");
+      setShowSuccess(true);
+
       fetchSection();
     } catch (error) {
       console.warn(error);
+      setErrorMessage(`Failed to update component: \n ${error.message}`);
+      setShowError(true);
     }
   };
-  console.log(sections);
+  {
+    showError && errorMessage && (
+      <ErrorMessage
+        message={errorMessage}
+        onClose={() => setShowError(false)}
+      />
+    );
+  }
 
   return (
     <div
       id="pageContainer"
       style={{ display: "flex", flexDirection: "column", overflowX: "hidden" }}
     >
+      {/* Error message toast */}
+      {showError && errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          onClose={() => setShowError(false)}
+        />
+      )}
+
       <div id="headerContainer" style={{ paddingBottom: "30px" }}>
         <HeaderComponent
           sections={sections}
@@ -146,7 +175,10 @@ function PageComponent() {
 
                 case "bookPreviewComponent":
                   return (
-                    <div id="bookPreviewComponentContainer" key={componentIndex}>
+                    <div
+                      id="bookPreviewComponentContainer"
+                      key={componentIndex}
+                    >
                       <BookPreviewListComponent
                         sections={sections}
                         key={componentIndex}

@@ -8,32 +8,32 @@ import { useNavigate } from "react-router-dom";
 function BookPreviewListComponent({ component, layoutprops, showEditView }) {
   const { styling } = component;
   const { section, fetchSection } = layoutprops;
-
   const parsedStyle = JSON.parse(styling);
+  const navigate = useNavigate();
+
   const [currentPage, setCurrentPage] = useState(0);
   const moviesPerPage = 5;
- 
   const [movies, setMovies] = useState([]);
-const navigate = useNavigate();
+
   useEffect(() => {
     async function fetchData() {
       const result = await GetTrendingMovies();
-       setMovies(result || []);
-    }
-    fetchData();
-  }, []);
-  
-if(movies.length === 0){
-  setMovies(component.books);
-  
-}
 
- 
+      // Safely fallback if API returned empty
+      if (result && Array.isArray(result) && result.length > 0) {
+        setMovies(result);
+      } else if (component.books && component.books.length > 0) {
+        setMovies(component.books);
+      }
+    }
+
+    fetchData();
+  }, [component.books]);
+
   const paginatedMovies = movies.slice(
     currentPage * moviesPerPage,
     (currentPage + 1) * moviesPerPage
   );
-
 
   const handleNext = () => {
     if ((currentPage + 1) * moviesPerPage < movies.length) {
@@ -47,28 +47,31 @@ if(movies.length === 0){
     }
   };
 
-  const handleGetMovieDetails = (selectedMovieId) =>{
-      navigate(`/search/movie-details?movieId=${selectedMovieId}`);
-
-  }
+  const handleGetMovieDetails = (selectedMovieId) => {
+    navigate(`/search/movie-details?movieId=${selectedMovieId}`);
+  };
 
   return (
-    <Row key={`preview-component-${1}`}>
-      <h2>Popular Movies this week </h2>
+    <Row>
+      <h2>Popular Movies this week</h2>
       <Col style={{ paddingBottom: "10px" }}>
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           <div style={parsedStyle.container}>
             {paginatedMovies.map((movie, idx) => (
-              <div key={idx} style={parsedStyle.bookCard}
-              onClick={() => handleGetMovieDetails(movie.id)}
-               >
+              <div
+                key={idx}
+                style={parsedStyle.bookCard}
+                onClick={() => handleGetMovieDetails(movie.id)}
+              >
                 <img
                   src={movie.poster_path || movie.imageUrl}
                   alt={movie.title}
                   style={parsedStyle.image}
                 />
                 <div style={parsedStyle.title}>{movie.title}</div>
-                <div style={parsedStyle.author}>{movie.release_date || movie?.author}</div>
+                <div style={parsedStyle.author}>
+                  {movie.release_date || movie?.author}
+                </div>
               </div>
             ))}
           </div>

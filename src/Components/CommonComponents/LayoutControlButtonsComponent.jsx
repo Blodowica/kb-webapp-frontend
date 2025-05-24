@@ -30,7 +30,7 @@ function LayoutControlButtonsComponent(props) {
       await moveUpBodyComponent(currentSectionId, selectedComponent._id);
       fetchSection();
     } catch (error) {
-      console.log(
+      window.alert(
         "Something went wrong trying to move up the selected component"
       );
     }
@@ -41,7 +41,7 @@ function LayoutControlButtonsComponent(props) {
       await moveDownBodyComponent(currentSectionId, selectedComponent._id);
       fetchSection();
     } catch (error) {
-      console.log(
+      window.alert(
         "Something went wrong trying to move down the selected component"
       );
     }
@@ -68,6 +68,7 @@ function LayoutControlButtonsComponent(props) {
 
     } catch (error) {
       console.warn(error)
+      window.alert(`Something went wrong: \n \n ${error}`)
     }
   };
 

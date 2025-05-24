@@ -3,8 +3,7 @@ import axios from "axios";
 const baseURL = process.env.REACT_APP_SEARCH_SERVICE_URL;
 
 function SearchMovieByQuery(query, page) {
-  console.log(baseURL);
-  if (query != null) {
+   if (query != null) {
     return axios
       .get(`${baseURL}/Movies/MovieBySearch`, {
         params: {
@@ -13,8 +12,7 @@ function SearchMovieByQuery(query, page) {
         },
       })
       .then((response) => {
-        console.log(response.data);
-        return response.data; // return the actual data
+         return response.data;  
       })
       .catch((error) => {
         console.log(error);
@@ -33,9 +31,7 @@ async function GetTrendingMovies() {
     const response = await axios.get(`${baseURL}/Movies/MovieTrending`);
      return response.data;  
   } catch (error) {
-    console.log("Error fetching trending movies:", error);
-    return [];  
-  }
+return { data: [], error: error.message || "Unknown error" };  }
 }
 
 
@@ -51,6 +47,25 @@ async function GetMovieDetailsById(movieId){
   }
 }
 
+async function GetMovieCreditsById(movieId){
+  try {
+    const response =  await axios.get(`${baseURL}/Movies/MovieCredits?movieId=${movieId}`);
+    return response.data;
+  } catch (error) {
+        window.alert("Error fetching movie Credits:", error);
 
-export { SearchMovieByQuery, GetTrendingMovies, GetMovieDetailsById };
+  }
+}
+
+async function GetRecommendedMoviesById(movieId){
+  try {
+    const response = await axios.get(`${baseURL}/Movies/MovieRecommendations?movieId=${movieId}`);
+    return response.data;
+  } catch (error) {
+    console.warn("There was a problem getting the recommended movies")
+  }
+}
+
+
+export { SearchMovieByQuery, GetTrendingMovies, GetMovieDetailsById, GetRecommendedMoviesById, GetMovieCreditsById};
 export default MovieServiceAPI;

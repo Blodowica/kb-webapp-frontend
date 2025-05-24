@@ -24,7 +24,7 @@ function HeaderComponent(props) {
   };
 
   const handleLogout = () => {
-    logout({ logoutParams: { returnTo: "http://localhost:3000" } });
+    logout({ logoutParams: { returnTo: process.env.REACT_APP_HOME_URL } });
   };
 
   const handleEditorView = (showEditView, setShowEditView) => {

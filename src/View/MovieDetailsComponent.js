@@ -1,40 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { GetMovieDetailsById } from "../API/MovieServiceAPI/MovieServiceAPI";
+import {
+  GetMovieCreditsById,
+  GetMovieDetailsById,
+  GetRecommendedMoviesById,
+} from "../API/MovieServiceAPI/MovieServiceAPI";
 import HeaderComponent from "../Components/LayoutComponents/HeaderComponents/HeaderComponent";
 import { GetAllPageComponents } from "../SanitySetup/sanityQueries";
 import client from "../SanitySetup/sanityClient";
-import { Col, Container, Row } from "react-bootstrap";
+import { Container, Nav, Row } from "react-bootstrap";
 import FooterComponent from "../Components/LayoutComponents/FooterComponents/FooterComponent";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import RecommendedMoviesComponent from "../Components/LayoutComponents/BodyComponents/RecommendedMoviesComponent";
+import LoadingSpinnerComponent from "../Components/CommonComponents/LoadingSpinnerComponent";
+import MovieExtraDetailsComponent from "../Components/LayoutComponents/BodyComponents/MovieExtraDetailsComponent";
+import MovieDetailsCardComponent from "../Components/LayoutComponents/BodyComponents/MovieDetailsCardComponent";
 
 function MovieDetailsComponent() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const movieId = queryParams.get("movieId");
-
   const [movie, setMovie] = useState(null);
   const [hideEditButton, setHideEditButton] = useState(false);
   const [sections, setSections] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [recommendedMovies, setRecommendedMovies] = useState(null);
+  const [movieCredits, setMovieCredits] = useState(null);
 
   const query = GetAllPageComponents();
+  const [activeTab, setActiveTab] = useState("movie-details");
 
   async function fetchSection() {
     const data = await client.fetch(query);
     setSections(data);
   }
+  async function GetMovieDetails() {
+    const movie = await GetMovieDetailsById(movieId);
+    setMovie(movie);
+    setHideEditButton(true);
+  }
 
   useEffect(() => {
     fetchSection();
-    async function GetMovieDetails() {
-      const movie = await GetMovieDetailsById(movieId);
-      setMovie(movie);
-      setHideEditButton(true);
-    }
 
     GetMovieDetails();
-  }, []);
+    GetReccomendMovies();
+    GetMovieCredits();
+    setLoading(false);
+  }, [movieId]);
 
-  console.log(movie);
+  const GetReccomendMovies = async () => {
+    const recommendedMovies = await GetRecommendedMoviesById(movieId);
+    setRecommendedMovies(recommendedMovies);
+  };
+
+  const GetMovieCredits  = async () =>{
+    const movieCredits = await GetMovieCreditsById(movieId);
+      setMovieCredits(movieCredits);
+  }
 
   if (!movieId) {
     return (
@@ -51,9 +73,14 @@ function MovieDetailsComponent() {
     );
   }
   if (!movie) {
-    return <p>Loading movie details...</p>;
+    return (
+      <Container fluid>
+        <Row className="justify-content-center  align-items-center vh-100">
+          <LoadingSpinnerComponent />
+        </Row>
+      </Container>
+    );
   }
-
   return (
     <>
       <Container fluid>
@@ -64,81 +91,50 @@ function MovieDetailsComponent() {
           />
         </div>
 
-        <Row
-          className="mt-2 p-4 position-relative"
-          style={{ minHeight: "400px" }}
-        >
-          {/* Background image layer */}
-          <div
-            className="position-absolute w-100 h-100"
-            style={{
-              top: 0,
-              left: 0,
-              backgroundImage: `url(${movie?.backdrop_path})`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-              opacity: 0.3, // control the dimming effect
-              zIndex: 0,
-            }}
-          />
+        <MovieDetailsCardComponent  movie={movie} />
 
-          {/* Foreground content */}
-          <Col
-            lg={3}
-            md={5}
-            sm={6}
-            xs={12}
-            className="position-relative"
-            style={{ zIndex: 1 }}
-          >
-            <img
-              style={{ height: "500px", borderRadius: "5%" }}
-              src={movie?.poster_path}
-              alt="Movie poster"
-              
-            />
-          </Col>
-          <Col
-            lg={9}
-            md={7}
-            xs={12}
-            className="position-relative"
-            style={{ zIndex: 1, textAlign: "start" }}
-          >
-            <h2 style={{ fontSize: "3rem", color: "black" }}>{movie?.title}</h2>
-            <h4>{movie?.tagline}</h4>
-            <br />
-            <strong >Overview:</strong>
-            <br />
-            <strong style={{fontWeight: '600',  fontSize: "1.333rem"}}>{movie?.overview}</strong>
-            <Col className="mt-4 pt-3">
-              <Col className="mb-1">
-                <strong> Release date: </strong> {movie?.release_date}
-              </Col>
-              <Col className="mb-1">
-                <strong> Status: </strong> {movie?.status}
-              </Col>
-              <Col className="mb-1">
-                <strong> Runtime: </strong> {movie?.runtime} minutes
-              </Col>
-              <Col className="mb-1">
-                <strong> Genres: </strong>{" "}
-                {movie.genres?.map((genre) => genre.name).join(", ")}
-              </Col>
+        <Row>
+          <Row>
+            <Nav
+              className="justify-content-center d-flex mt-3 gap-2 mx-auto"
+              variant="tabs"
+              activeKey={activeTab}
+              onSelect={(selectedKey) => setActiveTab(selectedKey)}
+            >
+              <Nav.Item>
+                <Nav.Link eventKey="movie-details">Movie Information </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="credit">Movie Credit</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="recommend">Reccomended Movies</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </Row>
 
-              <Col className="mb-1">
-                <strong> Production Companies: </strong>{" "}
-                {movie.production_companies
-                  ?.map((company) => company.name)
-                  .join(", ")}
-              </Col>
-            </Col>
-          </Col>
-        </Row>
-        <Row className="mt-4 pt-4 mb-4" style={{ textAlign: "start" }}>
-          <h4>Recommendations</h4>
-          Insert the fucntioanlity to show the recommended movies here
+          <Row className="mt-4">
+            {activeTab === "credit" && (
+
+                <>
+{console.log(movieCredits)}                
+                </>
+
+            )}
+            {activeTab === "recommend" && (
+              <div className="justify-content-center d-flex">
+                <RecommendedMoviesComponent
+                  recommendedMovies={recommendedMovies}
+                  fetchSection={fetchSection}
+                  GetMovieDetails={GetMovieDetails}
+                />
+              </div>
+            )}
+
+            {activeTab === "movie-details" && (
+              <MovieExtraDetailsComponent movie={movie} />
+            )}
+          </Row>
         </Row>
       </Container>
       <FooterComponent sections={sections} />
