@@ -47,24 +47,6 @@ function HeaderBannerComponent({ sections, editSelectedComponent }) {
                     </div>
                   </div>
                 </Col>
-
-                {/* <Col lg={1}>
-                  <Button className="m-3" variant="success">
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      RemoveComponentHelper({
-                        sectionId: section._id,
-                        componentId: component._id,
-                        componentReference: componentReference,
-                      })
-                    }
-                    variant="danger"
-                  >
-                    Delete
-                  </Button>
-                </Col> */}
               </div>
             );
           })

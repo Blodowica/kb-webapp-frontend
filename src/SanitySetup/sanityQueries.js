@@ -152,34 +152,34 @@ export async function AddBodyComponent(
   let defaultComponent = null;
 
   if (componentType == "bannerComponent") {
-    defaultComponent = BannerDefaultTemplateComponent(
+    defaultComponent = await BannerDefaultTemplateComponent(
       defaultComponent,
       componentId,
       componentType,
       componentName
     );
   } else if (componentType == "actionBannerComponent") {
-    defaultComponent = ActionBannerDefaultTemplateComponent(
+    defaultComponent = await ActionBannerDefaultTemplateComponent(
       defaultComponent,
       componentId,
       componentType,
       componentName
     );
   } else if (componentType == "cardImagesComponent") {
-    defaultComponent = CardImageDefaultTemplateComponent(
+    defaultComponent = await CardImageDefaultTemplateComponent(
       defaultComponent,
       componentId,
       componentType,
       componentName
     );
   } else if (componentType == "bookPreviewComponent") {
-    defaultComponent = BookPreviewDefaultTemplateComponent(
+    defaultComponent = await BookPreviewDefaultTemplateComponent(
       defaultComponent,
       componentId,
       componentType,
       componentName
     );
-  } else if (defaultComponent != null) {
+  } if (defaultComponent) {
     const component = await client.create(defaultComponent);
 
     const patched = await client

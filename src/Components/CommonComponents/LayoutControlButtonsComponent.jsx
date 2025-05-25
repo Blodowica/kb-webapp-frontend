@@ -61,7 +61,6 @@ function LayoutControlButtonsComponent(props) {
       await RemoveComponentHelper(
         section._id,
         component._id,
-        section._rev,
         componentType
       );
       fetchSection();

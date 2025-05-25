@@ -25,7 +25,6 @@ function MovieDetailsComponent() {
   const [loading, setLoading] = useState(true);
   const [recommendedMovies, setRecommendedMovies] = useState(null);
   const [movieCredits, setMovieCredits] = useState(null);
-
   const query = GetAllPageComponents();
   const [activeTab, setActiveTab] = useState("movie-details");
 
@@ -53,10 +52,10 @@ function MovieDetailsComponent() {
     setRecommendedMovies(recommendedMovies);
   };
 
-  const GetMovieCredits  = async () =>{
+  const GetMovieCredits = async () => {
     const movieCredits = await GetMovieCreditsById(movieId);
-      setMovieCredits(movieCredits);
-  }
+    setMovieCredits(movieCredits);
+  };
 
   if (!movieId) {
     return (
@@ -91,7 +90,7 @@ function MovieDetailsComponent() {
           />
         </div>
 
-        <MovieDetailsCardComponent  movie={movie} />
+        <MovieDetailsCardComponent movie={movie} />
 
         <Row>
           <Row>
@@ -115,11 +114,33 @@ function MovieDetailsComponent() {
 
           <Row className="mt-4">
             {activeTab === "credit" && (
+              <>
+                <img
+                  style={{ height: "200px", width: "auto" }}
+                  src={movieCredits?.director?.profile_path}
+                  alt={movieCredits?.director?.job || "Poster image"}
+                />
+                {movieCredits?.director?.name} <br />
+                {movieCredits?.director?.job}
+                <img
+                  style={{ height: "200px", width: "auto" }}
+                  src={movieCredits?.producer?.profile_path}
+                  alt={movieCredits?.producer?.job || "Poster image"}
+                />
+                {movieCredits?.producer?.name} <br />
+                {movieCredits?.producer?.job}
+                {console.log(movieCredits)}
+                <h4>Cast Memebers</h4>
+                {movieCredits.topCast &&
+                  movieCredits.topCast?.map((castMember, index) => (
+                    <>
+                    <img key={index} style={{height: '200px' , width: 'auto'}} src={castMember.profile_path} alt="actor profile" />
+                      {castMember.name} <br />
+                      {castMember.character}
 
-                <>
-{console.log(movieCredits)}                
-                </>
-
+                    </>
+                  ))}
+              </>
             )}
             {activeTab === "recommend" && (
               <div className="justify-content-center d-flex">
