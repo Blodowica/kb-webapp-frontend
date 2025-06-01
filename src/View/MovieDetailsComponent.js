@@ -7,13 +7,14 @@ import {
 import HeaderComponent from "../Components/LayoutComponents/HeaderComponents/HeaderComponent";
 import { GetAllPageComponents } from "../SanitySetup/sanityQueries";
 import client from "../SanitySetup/sanityClient";
-import { Container, Nav, Row } from "react-bootstrap";
+import {Container, Nav, Row } from "react-bootstrap";
 import FooterComponent from "../Components/LayoutComponents/FooterComponents/FooterComponent";
 import { useLocation } from "react-router-dom";
 import RecommendedMoviesComponent from "../Components/LayoutComponents/BodyComponents/RecommendedMoviesComponent";
 import LoadingSpinnerComponent from "../Components/CommonComponents/LoadingSpinnerComponent";
 import MovieExtraDetailsComponent from "../Components/LayoutComponents/BodyComponents/MovieExtraDetailsComponent";
 import MovieDetailsCardComponent from "../Components/LayoutComponents/BodyComponents/MovieDetailsCardComponent";
+import MovieCreditComponent from "../Components/LayoutComponents/BodyComponents/MovieCreditComponent";
 
 function MovieDetailsComponent() {
   const location = useLocation();
@@ -111,36 +112,9 @@ function MovieDetailsComponent() {
               </Nav.Item>
             </Nav>
           </Row>
-
           <Row className="mt-4">
             {activeTab === "credit" && (
-              <>
-                <img
-                  style={{ height: "200px", width: "auto" }}
-                  src={movieCredits?.director?.profile_path}
-                  alt={movieCredits?.director?.job || "Poster image"}
-                />
-                {movieCredits?.director?.name} <br />
-                {movieCredits?.director?.job}
-                <img
-                  style={{ height: "200px", width: "auto" }}
-                  src={movieCredits?.producer?.profile_path}
-                  alt={movieCredits?.producer?.job || "Poster image"}
-                />
-                {movieCredits?.producer?.name} <br />
-                {movieCredits?.producer?.job}
-                {console.log(movieCredits)}
-                <h4>Cast Memebers</h4>
-                {movieCredits.topCast &&
-                  movieCredits.topCast?.map((castMember, index) => (
-                    <>
-                    <img key={index} style={{height: '200px' , width: 'auto'}} src={castMember.profile_path} alt="actor profile" />
-                      {castMember.name} <br />
-                      {castMember.character}
-
-                    </>
-                  ))}
-              </>
+              <MovieCreditComponent movieCredits={movieCredits} />
             )}
             {activeTab === "recommend" && (
               <div className="justify-content-center d-flex">
@@ -151,7 +125,6 @@ function MovieDetailsComponent() {
                 />
               </div>
             )}
-
             {activeTab === "movie-details" && (
               <MovieExtraDetailsComponent movie={movie} />
             )}

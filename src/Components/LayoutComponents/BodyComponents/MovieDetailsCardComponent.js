@@ -1,11 +1,10 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 
-function MovieDetailsCardComponent({movie}) {
-if(!movie)
-{
+function MovieDetailsCardComponent({ movie }) {
+  if (!movie) {
     movie = null;
-}
+  }
 
   return (
     <Row className="mt-1 p-4 position-relative" style={{ minHeight: "550px" }}>
@@ -56,15 +55,19 @@ if(!movie)
         </strong>
         <Col className="mt-4 pt-3">
           <Col className="mb-1">
-            <strong> Release date: </strong> {movie?.release_date ? movie?.release_date : "Uknown"}
+            <strong> Release date: </strong>{" "}
+            {movie?.release_date ? movie?.release_date : "Uknown"}
           </Col>
 
           <Col className="mb-1">
-            <strong> Runtime: </strong> {movie?.runtime ? movie?.runtime + " minutes" : "Unknown"} 
+            <strong> Runtime: </strong>{" "}
+            {movie?.runtime ? movie?.runtime + " minutes" : "Unknown"}
           </Col>
           <Col className="mb-1">
             <strong> Genres: </strong>
-            { movie?.genre ? movie?.genres?.map((genre) => genre.name).join(", ") : "Unknown" } 
+            {movie?.genres?.length
+              ? movie.genres.map((genre) => genre.name).join(", ")
+              : "Unknown"}
           </Col>
         </Col>
       </Col>
@@ -73,5 +76,3 @@ if(!movie)
 }
 
 export default MovieDetailsCardComponent;
-
- 
