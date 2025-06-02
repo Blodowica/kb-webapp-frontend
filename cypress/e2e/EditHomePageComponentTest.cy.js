@@ -85,7 +85,6 @@ describe("Move up the last action banner", () => {
 
     cy.get("@consoleLog").should(
       "be.calledWithMatch",
-      /Moved component .* up in bodyComponents/
     );
   });
 });

@@ -13,7 +13,6 @@ import {
   Table,
 } from "react-bootstrap";
 import { GetAllPageComponents } from "../SanitySetup/sanityQueries";
-import { render } from "@testing-library/react";
 import FilterMenuComponent from "../Components/LayoutComponents/BodyComponents/FilterMenuComponent";
 
 function SearchCollectionComponent() {
