@@ -1,4 +1,3 @@
-import React from 'react';
 
 
 function CardImageDefaultTemplateComponent(defaultComponent, componentId, componentType, componentName) {

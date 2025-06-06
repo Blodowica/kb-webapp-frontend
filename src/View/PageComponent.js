@@ -9,13 +9,11 @@ import ActionBannerComponent from "../Components/LayoutComponents/BodyComponents
 import BannerComponent from "../Components/LayoutComponents/BodyComponents/BannerComponent";
 import { Container, Row } from "react-bootstrap";
 import AddComponentButton from "../Components/CommonComponents/AddComponentButton";
-import {
-  GetAllPageComponents,
-  UpdateComponentQuery,
-} from "../SanitySetup/sanityQueries";
-
+import { GetAllPageComponents, UpdateComponentQuery } from "../SanitySetup/sanityQueries";
 import AddComponentOptionButtons from "../Components/CommonComponents/AddComponentOptionButtons";
 import ErrorMessage from "../Components/CommonComponents/ErrorMessageComponent";
+import { GetAllImages } from "../API/MediaServiceAPI/MediaServiceAPI";
+import ImageSelectModalComponent from "../Components/CommonComponents/ImageSelectModalComponent";
 
 function PageComponent() {
   const [sections, setSections] = useState([]);
@@ -27,8 +25,11 @@ function PageComponent() {
   const [showError, setShowError] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const [showSuccess, setShowSuccess] = useState(null);
+  const [imageOptions, setImageOptions] = useState([]);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [hoveredComponentId, setHoveredComponentId] = useState(null);
+  const [activeImageField, setActiveImageField] = useState(null);
 
-  // get all section data query!
   const query = GetAllPageComponents();
 
   async function fetchSection() {
@@ -44,11 +45,9 @@ function PageComponent() {
     try {
       const response = await UpdateComponentQuery(componentId, formData);
       console.log(response);
-
       setErrorMessage(null);
       setSuccessMessage("Component updated successfully!");
       setShowSuccess(true);
-
       fetchSection();
     } catch (error) {
       console.warn(error);
@@ -56,21 +55,92 @@ function PageComponent() {
       setShowError(true);
     }
   };
-  {
-    showError && errorMessage && (
-      <ErrorMessage
-        message={errorMessage}
-        onClose={() => setShowError(false)}
-      />
-    );
+
+  const handleImageClick = (fieldName, componentId) => {
+    if(editSelectedComponent)
+    {
+
+      setActiveImageField(fieldName);
+      setSelectedComponentId(componentId);
+      fetchImages();
+      setShowImageModal(true);
+    }
+  };
+
+  const handleImageSelect = (selectedImageUrl) => {
+    if (!selectedComponentId || !activeImageField) {
+      setShowImageModal(false);
+      return;
+    }
+
+    let targetComponent = null;
+    for (const section of sections) {
+      const found = (section.bodyComponents || []).find(
+        (c) => c._id === selectedComponentId
+      );
+      if (found) {
+        targetComponent = found;
+        break;
+      }
+    }
+
+    if (!targetComponent) {
+      console.warn("No component found for ID:", selectedComponentId);
+      setShowImageModal(false);
+      return;
+    }
+
+    const { _id, styling, _type, ...rest } = targetComponent;
+    const newFormData = {
+      ...rest,
+      [activeImageField]: selectedImageUrl,
+    };
+
+    handleUpdateComponent(selectedComponentId, newFormData);
+    setShowImageModal(false);
+  };
+
+ const getCookie = (name) => {
+  const cookie = document.cookie
+    .split('; ')
+    .find(row => row.startsWith(`${name}=`));
+  return cookie ? cookie.split('=')[1] : null;
+};
+
+ const setCookie = (name, value, days) => {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+};
+
+const fetchImages = async () => {
+  const imagesCookie = getCookie('images');
+  let parsedImages = imagesCookie ? JSON.parse(imagesCookie) : null;
+
+  if (parsedImages && parsedImages.length > 0) {
+    console.log("Loaded images from cookie:", parsedImages);
+    setImageOptions(parsedImages);
+    return;
   }
+
+  try {
+    const response = await GetAllImages();
+    const images = response?.data || [];
+
+    setImageOptions(images);
+    setCookie('images', JSON.stringify(images), 7); // Set for 1 week
+    console.log("Fetched and cached images:", images);
+  } catch (error) {
+    console.error("Error fetching images:", error);
+    setImageOptions([]);
+  }
+};
+
 
   return (
     <div
       id="pageContainer"
       style={{ display: "flex", flexDirection: "column", overflowX: "hidden" }}
     >
-      {/* Error message toast */}
       {showError && errorMessage && (
         <ErrorMessage
           message={errorMessage}
@@ -105,14 +175,18 @@ function PageComponent() {
                   return (
                     <Container key={`imageCard-${componentIndex}`}>
                       <ImageCardComponent
-                        key={componentIndex}
                         component={component}
                         editSelectedComponent={editSelectedComponent}
                         handleUpdateComponent={handleUpdateComponent}
                         section={section}
                         setEditSelectedComponent={setEditSelectedComponent}
                         showEditView={showEditView}
-                        fetchSection={() => fetchSection()}
+                        fetchSection={fetchSection}
+                        hoveredComponentId={hoveredComponentId}
+                        setHoveredComponentId={setHoveredComponentId}
+                        handleImageClick={(field) =>
+                          handleImageClick(field, component._id)
+                        }
                         layoutprops={{
                           section: section,
                           editSelectedComponent: editSelectedComponent,
@@ -124,6 +198,7 @@ function PageComponent() {
                       />
                     </Container>
                   );
+
                 case "actionBannerComponent":
                   return (
                     <div
@@ -132,14 +207,18 @@ function PageComponent() {
                       style={{ paddingBottom: "30px" }}
                     >
                       <ActionBannerComponent
-                        key={componentIndex}
                         component={component}
                         editSelectedComponent={editSelectedComponent}
                         handleUpdateComponent={handleUpdateComponent}
                         section={section}
                         setEditSelectedComponent={setEditSelectedComponent}
                         showEditView={showEditView}
-                        fetchSection={() => fetchSection()}
+                        fetchSection={fetchSection}
+                        hoveredComponentId={hoveredComponentId}
+                        setHoveredComponentId={setHoveredComponentId}
+                        handleImageClick={(field) =>
+                          handleImageClick(field, component._id)
+                        }
                         layoutprops={{
                           section: section,
                           editSelectedComponent: editSelectedComponent,
@@ -151,6 +230,7 @@ function PageComponent() {
                       />
                     </div>
                   );
+
                 case "bannerComponent":
                   return (
                     <BannerComponent
@@ -161,7 +241,12 @@ function PageComponent() {
                       section={section}
                       setEditSelectedComponent={setEditSelectedComponent}
                       showEditView={showEditView}
-                      fetchSection={() => fetchSection()}
+                      fetchSection={fetchSection}
+                      hoveredComponentId={hoveredComponentId}
+                      setHoveredComponentId={setHoveredComponentId}
+                      handleImageClick={(field) =>
+                        handleImageClick(field, component._id)
+                      }
                       layoutprops={{
                         section: section,
                         editSelectedComponent: editSelectedComponent,
@@ -181,14 +266,16 @@ function PageComponent() {
                     >
                       <BookPreviewListComponent
                         sections={sections}
-                        key={componentIndex}
                         component={component}
                         editSelectedComponent={editSelectedComponent}
                         handleUpdateComponent={handleUpdateComponent}
                         section={section}
                         setEditSelectedComponent={setEditSelectedComponent}
                         showEditView={showEditView}
-                        fetchSection={() => fetchSection()}
+                        handleImageClick={(field) =>
+                          handleImageClick(field, component._id)
+                        }
+                        fetchSection={fetchSection}
                         layoutprops={{
                           section: section,
                           editSelectedComponent: editSelectedComponent,
@@ -200,11 +287,12 @@ function PageComponent() {
                       />
                     </div>
                   );
-                // Add more cases here for other component types in the future
+
                 default:
                   return null;
               }
             })}
+
             <div>
               <AddComponentButton
                 setShowOptionsButtons={setShowOptionsButtons}
@@ -224,6 +312,17 @@ function PageComponent() {
         ))}
 
       <FooterComponent sections={sections} />
+
+      <ImageSelectModalComponent
+        showImageModal={showImageModal}
+        setShowImageModal={setShowImageModal}
+        imageOptions={imageOptions}
+        handleImageSelect={(imgUrl) => handleImageSelect(imgUrl)}
+        _id={selectedComponentId}
+        formData={null}
+        component={null}
+        activeImageField={activeImageField}
+      />
     </div>
   );
 }

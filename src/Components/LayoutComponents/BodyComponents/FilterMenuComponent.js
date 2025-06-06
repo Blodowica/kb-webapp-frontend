@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card, Col, Collapse, Form, Row, Badge } from "react-bootstrap";
 import { GetGenreList, GetMovieWithFilters } from "../../../API/MovieServiceAPI/MovieServiceAPI";
 
@@ -85,11 +85,12 @@ function FilterMenuComponent({ activeTab, setActiveTab, page, setMovies }) {
         page,
         sortOption,
         includeGenres,
+        releaseYear,
         excludeGenres,
-        keywords,
         excludeKeywords,
-        releaseYear
+        
       );
+
 
       if(response.length >= 1){
         setMovies(response)
@@ -254,6 +255,7 @@ function FilterMenuComponent({ activeTab, setActiveTab, page, setMovies }) {
                 type="number"
                 placeholder="e.g. 2023"
                 value={releaseYear}
+                defaultValue={2000}
                 onChange={(e) => setReleaseYear(e.target.value)}
               />
             </Form.Group>
@@ -280,27 +282,6 @@ function FilterMenuComponent({ activeTab, setActiveTab, page, setMovies }) {
                     />
                   ))}
                 </Form>
-
-                <Form.Group className="mt-3" controlId="excludeKeywordInput">
-                  <Form.Label>Exclude Keywords</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Add keyword to exclude"
-                    value={excludeKeywordInput}
-                    onChange={(e) => setExcludeKeywordInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddKeyword(excludeKeywordInput, excludeKeywords, setExcludeKeywords, setExcludeKeywordInput);
-                      }
-                    }}
-                  />
-                  <Button variant="danger" className="mt-2" onClick={() =>
-                    handleAddKeyword(excludeKeywordInput, excludeKeywords, setExcludeKeywords, setExcludeKeywordInput)
-                  }>
-                    Add Exclude Keyword
-                  </Button>
-                </Form.Group>
               </div>
             </Collapse>
 

@@ -7,6 +7,7 @@ import SearchCollectionComponent from "./View/SearchCollectionComponent";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Auth0Provider } from "@auth0/auth0-react";
 import MovieDetailsComponent from "./View/MovieDetailsComponent";
+import UploadImageComponent from "./View/UploadImageComponent";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route key={"search-collection"} path="/search" element={<SearchCollectionComponent />} />
           <Route key={"page"} path="/" element={<PageComponent />} />
           <Route key={"movie-details"} path="/search/movie-details" element={<MovieDetailsComponent />} />
+          <Route key={"upload"} path="/upload" element={<UploadImageComponent /> } />
         </Routes>
       </BrowserRouter>
       </Auth0Provider>

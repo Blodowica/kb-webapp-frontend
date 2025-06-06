@@ -7,10 +7,8 @@ import {
   Card,
   Col,
   Container,
-  Nav,
   Pagination,
   Row,
-  Table,
 } from "react-bootstrap";
 import { GetAllPageComponents } from "../SanitySetup/sanityQueries";
 import FilterMenuComponent from "../Components/LayoutComponents/BodyComponents/FilterMenuComponent";

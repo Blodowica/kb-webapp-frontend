@@ -30,6 +30,7 @@ async function RemoveComponentHelper(
 
     // Delete the component after ref is removed
     const response = await client.delete(componentId);
+    console.log(response)
    } catch (error) {
      alert("Error deleting component:", error);
   }

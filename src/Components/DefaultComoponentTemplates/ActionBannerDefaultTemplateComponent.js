@@ -1,6 +1,3 @@
-import React from 'react';
-
-
 
 function ActionBannerDefaultTemplateComponent(defaultComponent, componentId, componentType, componentName) {
 

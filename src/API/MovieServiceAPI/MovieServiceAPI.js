@@ -78,6 +78,9 @@ async function GetMovieWithFilters(
   excludeGenreIds,
   language = "en-US"
 ) {
+
+  
+  
   try {
     const params = {};
 
@@ -90,7 +93,7 @@ async function GetMovieWithFilters(
     }
 
     // Include genres as comma-separated IDs (e.g. "14,35,25")
-    if (includeGenreIds && includeGenreIds.length > 0) {
+    if (includeGenreIds && includeGenreIds?.length > 0) {
       params.genres = includeGenreIds.join(",");
     }
 
@@ -108,7 +111,7 @@ async function GetMovieWithFilters(
     if (language) {
       params.language = language;
     }
-
+ 
     
     const response = await axios.get(
       `${baseURL}/Movies/MovieSearchByFilter`,
