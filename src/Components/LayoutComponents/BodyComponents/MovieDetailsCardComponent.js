@@ -66,7 +66,7 @@ function MovieDetailsCardComponent({ movie }) {
           <Col className="mb-1">
             <strong> Genres: </strong>
             {movie?.genres?.length
-              ? movie.genres.map((genre) => genre.name).join(", ")
+              ? movie.genres?.map((genre) => genre.name).join(", ")
               : "Unknown"}
           </Col>
         </Col>

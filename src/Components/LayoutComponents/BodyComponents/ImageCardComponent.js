@@ -49,7 +49,7 @@ function ImageCardComponent({
       <Col>
         <div style={parsedStyles.container}>
           <div style={parsedStyles.cardWrapper}>
-            {cardIndices.map((i = 1) => (
+            {cardIndices?.map((i = 1) => (
               <div key={i} style={parsedStyles.card}>
                 <div
                   style={{

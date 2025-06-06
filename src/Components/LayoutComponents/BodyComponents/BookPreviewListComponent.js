@@ -57,7 +57,7 @@ function BookPreviewListComponent({ component, layoutprops, showEditView }) {
       <Col style={{ paddingBottom: "10px" }}>
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           <div style={parsedStyle.container}>
-            {paginatedMovies.map((movie, idx) => (
+            {paginatedMovies?.map((movie, idx) => (
               <div
                 key={idx}
                 style={parsedStyle.bookCard}

@@ -102,7 +102,7 @@ function MovieCreditComponent({movieCredits}) {
                           </span>
                         }
                       >
-                        {chunkCast(movieCredits.topCast, 3).map(
+                        {chunkCast(movieCredits.topCast, 3)?.map(
                           (castGroup, index) => (
                             <Carousel.Item key={index}>
                               <Row className="justify-content-center">

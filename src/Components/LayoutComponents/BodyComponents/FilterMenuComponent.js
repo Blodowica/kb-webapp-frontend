@@ -248,14 +248,12 @@ function FilterMenuComponent({ activeTab, setActiveTab, page, setMovies }) {
             </Collapse>
 
         
-
             <Form.Group className="mt-3">
               <Form.Label>Release Year:</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="e.g. 2023"
                 value={releaseYear}
-                defaultValue={2000}
                 onChange={(e) => setReleaseYear(e.target.value)}
               />
             </Form.Group>

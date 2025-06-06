@@ -28,7 +28,7 @@ function ImageSelectModalComponent({
         <div style={{ maxHeight: "500px", overflowY: "auto", overflowX: "hidden" }}>
           <Row>
             {imageOptions?.length > 0 ? (
-              imageOptions.map((img, idx) => (
+              imageOptions?.map((img, idx) => (
                 <Col xs={4} md={3} className="mb-3" key={idx}>
                   <Image
                     src={img}
