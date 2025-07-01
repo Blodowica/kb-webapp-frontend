@@ -30,14 +30,27 @@ function GetSanityQuery() {
 
   return null;
 }
+
+/* 
+to load other webpage sections
+`*[_type == "section" && name in ["headerSectionEindhoven", "bodySectionEindhoven", "footerSectionEindhoven"]] {
+  ...,
+  headerComponents[]->,
+  bodyComponents[]->,
+  footerComponents[]->,
+  headerBannerComponents[]->
+}`
+
+*/
 function GetAllPageComponents() {
-  return `*[_type == "section"]{
-    ...,
-    headerComponents[]->,
-    bodyComponents[]->,
-    footerComponents[]->,
-    headerBannerComponents[]->
-  }`;
+  return `*[_type == "section" && name in ["headerSection", "bodySection", "footerSection"]] {
+  ...,
+  headerComponents[]->,
+  bodyComponents[]->,
+  footerComponents[]->,
+  headerBannerComponents[]->
+}
+`;
 }
 
 async function UpdateComponentQuery(id, updatedFields) {
